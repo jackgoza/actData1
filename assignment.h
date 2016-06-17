@@ -19,7 +19,7 @@ private:
 
 public:
 	assignment();
-	assignment(assignment& other);
+	assignment(const assignment& other);
 	const assignment& operator=(const assignment& rhs);
 
 	Date getDueDate();

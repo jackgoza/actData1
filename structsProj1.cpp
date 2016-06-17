@@ -10,20 +10,29 @@
 #include "assignment.h"
 #include <fstream>
 #include <list>
+#include <iterator>
 
 using namespace std;
 
 int main(){
+	list<assignment> Assignments;
+	list<assignment> Assigned;
+	list<assignment> Completed;
+
+	assignment temp;
 
 	ifstream in("assignment.txt");
-	ofstream out("assignment2.txt");
-	assignment temp;
 
 	while (in.good()){
 		in >> temp;
-		out << temp;
+		Assignments.push_back(temp);
 	}
 
-	in.close();
-	out.close();
+	list <assignment>::iterator it = Assignments.begin();
+
+	for (it; it != Assignments.end(); it++){
+		cout << *it;
+	}
+
+	system("pause");
 }

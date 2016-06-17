@@ -14,7 +14,7 @@ assignment::assignment(){
 	description = "";
 }
 
-assignment::assignment(assignment& other){
+assignment::assignment(const assignment& other){
 	dueDate = other.dueDate;
 	description = other.description;
 	assignedDate = other.assignedDate;
@@ -46,8 +46,13 @@ Status assignment::getStatus(){
 
 istream &operator>>(istream& in, assignment& current){
 	char temp;
+	
 
-	in >> current.dueDate >> current.description >> current.assignedDate >> temp;
+	in >> current.dueDate;
+
+	getline(in, current.description, ',');
+
+	in >> current.assignedDate >> temp;
 
 	switch (temp){
 	case 'A':
