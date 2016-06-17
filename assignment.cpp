@@ -26,10 +26,25 @@ const assignment& assignment:: operator =(const assignment& rhs){
 	description = rhs.description;
 	assignedDate = rhs.assignedDate;
 	status = rhs.status;
+	return *this;
 }
 
+Date assignment::getDueDate(){
+	return dueDate;
+}
 
-istream &operator>>(istream& in, assignment current){
+string assignment::getDescription(){
+	return description;
+}
+
+Date assignment::getAssignedDate(){
+	return assignedDate;
+}
+Status assignment::getStatus(){
+	return status;
+}
+
+istream &operator>>(istream& in, assignment& current){
 	char temp;
 
 	in >> current.dueDate >> current.description >> current.assignedDate >> temp;
@@ -43,6 +58,17 @@ istream &operator>>(istream& in, assignment current){
 	case'l': current.status = late; break;
 	}
 
-	cin.ignore(20, '\n');
+	in.ignore(20, '\n');
 	return in;
+}
+
+ostream& operator<<(ostream& out, assignment& current){
+	out << current.dueDate << ", " << current.description << ", " << current.assignedDate << ", ";
+	switch (current.status){
+	case 0: out << "assigned"; break;
+	case 1: out << "completed"; break;
+	case 2: out << "late"; break;
+	}
+
+	return out << endl;
 }

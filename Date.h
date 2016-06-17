@@ -105,6 +105,10 @@ public:
 		return in;
 	}
 
+	friend ostream& operator <<(ostream& out, Date& d){
+		return out << d.month << "-" << d.day << "-" << d.year;
+	}
+
 	//checks whether this date < another date
 	bool operator <(const Date& other) const{
 		if (year != other.year)
@@ -303,6 +307,7 @@ public:
 		month = rhs.month;
 		day = rhs.day;
 		format = rhs.format;
+		return *this;
 	}
 
 
