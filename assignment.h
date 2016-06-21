@@ -8,7 +8,7 @@
 
 using namespace std;
 
-enum Status{ assigned, completed, late };
+enum Status{ assigned = 1, completed = 2, late = 3 };
 
 class assignment{
 private:
@@ -27,8 +27,18 @@ public:
 	Date getAssignedDate();
 	Status getStatus();
 
+	void setDueDate(Date date);
+	void setDescription(string desc);
+	void setAssignedDate(Date date);
+	void setStatus(int stat);
+
 	friend istream& operator>>(istream& in, assignment& current);
 	friend ostream& operator<<(ostream& out, assignment& current);
+
+	bool operator <(const assignment& rhs) const;
+	bool operator >(const assignment& rhs) const;
+	bool operator ==(const assignment& rhs) const;
+
 };
 
 #endif

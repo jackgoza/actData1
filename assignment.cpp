@@ -44,6 +44,23 @@ Status assignment::getStatus(){
 	return status;
 }
 
+void assignment::setDueDate(Date date){
+	dueDate = date;
+}
+void assignment::setDescription(string desc){
+	description = desc;
+}
+void assignment::setAssignedDate(Date date){
+	assignedDate = date;
+}
+void assignment::setStatus(int stat){
+	switch (stat){
+	case 1: status = assigned; break;
+	case 2: status = completed; break;
+	case 3: status = late; break;
+	}
+}
+
 istream &operator>>(istream& in, assignment& current){
 	char temp;
 	
@@ -70,10 +87,22 @@ istream &operator>>(istream& in, assignment& current){
 ostream& operator<<(ostream& out, assignment& current){
 	out << current.dueDate << ", " << current.description << ", " << current.assignedDate << ", ";
 	switch (current.status){
-	case 0: out << "assigned"; break;
-	case 1: out << "completed"; break;
-	case 2: out << "late"; break;
+	case 1: out << "assigned"; break;
+	case 2: out << "completed"; break;
+	case 3: out << "late"; break;
 	}
 
-	return out << endl;
+	return out;
+}
+
+bool assignment::operator <(const assignment& rhs) const{
+	return dueDate < rhs.dueDate;
+}
+
+bool assignment::operator >(const assignment& rhs) const{
+	return dueDate > rhs.dueDate;
+}
+
+bool assignment::operator ==(const assignment& rhs) const{
+	return dueDate == rhs.dueDate;
 }
