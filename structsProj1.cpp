@@ -76,9 +76,10 @@ Date inputDate(){
 	while (true){
 		
 		try {
+			cin.ignore();
 			getline(cin, temp);
-			Date date(temp);
-			if (date.valid_date(date.getDay(), date.getMonth(), date.getYear())){
+			Date date(temp, US);
+			if (date.valid_date(date.getYear(), date.getMonth(), date.getDay())){
 				return date;
 			}
 			else{
@@ -91,12 +92,12 @@ Date inputDate(){
 	}
 }
 
-assignment getAssn(){
+assignment addAssignment(){ // use this to make a new assignment
 	assignment newAssn;
 	string temp;
 	char tempC;
 
-	cout << "Due Date: (dd-mm-yyyy); ";
+	cout << "Due Date: (mm-dd-yyyy): ";
 	newAssn.setDueDate(inputDate());
 
 	cout << endl << "Description: ";
@@ -154,12 +155,6 @@ void addAssn(list<assignment> List){
 	List.push_back(Assn);
 } // This is redundant
 
-void sort(list<assignment> L1, list<assignment> L2, list<assignment> L3){
-	L1.sort();
-	L2.sort();
-	L3.sort();
-}
-
 void markComplete(list<assignment> Assn, list<assignment> Comp, Date assnDate){
 	list <assignment>::iterator it;
 	for (it = Assn.begin(); it != Assn.end(); it++){
@@ -189,7 +184,7 @@ void printAssignments(list<assignment> Assn, list<assignment> Comp){
 	
 }
 
-void save(string File, list<assignment> List){
+void save(string File, list<assignment> List){ // overwrite file with new list
 	ofstream out(File);
 	list<assignment>::iterator it;
 	for (it = List.begin(); it != List.end(); it++)
@@ -326,18 +321,17 @@ void displayLate(list<assignment> Comp)//diplay number of late status
 	for (it = Comp.begin(); it != Comp.end(); it++) {
 		if (it->getStatus() == late) {
 			count++;
-		}
-		cout << count << endl;
-		return;
+		}	
 	}
+	cout << count << endl;
 }
 
 int main(){
 	SetConsoleTitle(TEXT("Assignment System, Proj1A, BY: J. Goza, J. Ford, S. Peery")); // set console title
 	
-	list<assignment> Assignments;
-	list<assignment> Assigned;
-	list<assignment> Completed;
+	list<assignment> Assignments; // all assignments
+	list<assignment> Assigned; 
+	list<assignment> Completed; // completed and late assignments
 
 	assignment temp;
 	
@@ -363,7 +357,7 @@ int main(){
 	}
 
 
-	while (fin.good()){
+	while (fin.good()){ // initialize all lists with file input
 		fin >> temp;
 		Assignments.push_back(temp);
 		if (temp.getStatus() == assigned){
@@ -373,6 +367,12 @@ int main(){
 			Completed.push_back(temp);
 		}
 	}
+
+	// initial sort of all lists
+	Assignments.sort();
+	Assigned.sort();
+	Completed.sort();
+	
 	
 	bool menuBool = false; bool runAgain = true;
 	int menuInput = 0;
@@ -405,14 +405,40 @@ int main(){
 	}
 	
 	switch(menuInput){
-		case 1 : printAssignments(Assigned, Completed); break;
-		case 2 : addAssn(Assigned); break;
-		case 3: editDue(Assigned); break;
-		case 4: editDescription(Assigned); break;
-		case 5: editStatus (Assigned, Completed); break;
-		case 6 : displayLate(Completed); break;
-		case 7 : printAssignments(Assigned, Completed);// needs to output to txt file to update
-		case 8 : cout << "Goodbye!\n"; runAgain = false; break;
+		case 1 : 
+			printAssignments(Assigned, Completed); break; // functional, TODO make it look pretty
+
+		case 2 : // works
+			temp = addAssignment();
+			Assignments.push_back(temp);
+			Assignments.sort();
+			if (temp.getStatus() == assigned){
+				Assigned.push_back(temp);
+				Assigned.sort();
+			}
+			else{
+				Completed.push_back(temp);
+				Completed.sort();
+			}
+			break;
+
+		case 3: 
+			editDue(Assigned); break; // TODO make all three edit cases one case 
+										//(edit assignment: find assignment by due date: which part of assignment would you like to edit?)
+		case 4: 
+			editDescription(Assigned); break;
+		
+		case 5: 
+			editStatus (Assigned, Completed); break; // doesn't work
+		
+		case 6 :
+			displayLate(Completed); break; // works
+		
+		case 7 : 
+			printAssignments(Assigned, Completed);// needs to output to txt file to update
+		
+		case 8 : 
+			cout << "Goodbye!\n"; runAgain = false; break;
 	}
 	}
 	
