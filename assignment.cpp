@@ -106,3 +106,7 @@ bool assignment::operator >(const assignment& rhs) const{
 bool assignment::operator ==(const assignment& rhs) const{
 	return dueDate == rhs.dueDate;
 }
+
+bool assignment::operator !=(const assignment& rhs) const{
+	return assignedDate != rhs.assignedDate;
+}
