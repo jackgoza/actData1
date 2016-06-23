@@ -350,6 +350,7 @@ void displayLate(list<assignment> Comp)//diplay number of late status
 		}	
 	}
 	cout << count << endl;
+<<<<<<< HEAD
 }
 
 string getFile(string FileName) {
@@ -393,6 +394,12 @@ int main(){
 =======
 	//SetConsoleTitle(TEXT("Assignment System, Proj1A, BY: J. Goza, J. Ford, S. Peery")); // set console title
 >>>>>>> refs/remotes/origin/master
+=======
+}
+
+int main(){
+
+>>>>>>> refs/remotes/origin/master
 	
 	list<assignment> Assignments; // all assignments
 	list<assignment> Assigned; 
@@ -402,12 +409,13 @@ int main(){
 	
 	string FileName;//used incase of diffrent file extensions .txt and .csv
 	
-	cout << "Welcome to the menu based assignment system!\n";
-
 	// determine file extesnion type and name to open with fin variable
 	cout << "Enter the name of the file you want to open, please include file extension: " << endl;
 	cin >> FileName;
 <<<<<<< HEAD
+<<<<<<< HEAD
+=======
+>>>>>>> refs/remotes/origin/master
 	
 	/*TODO
 	 make function fetfile() to call for lines 350-360. put in a while loop until correct file
@@ -441,13 +449,18 @@ int main(){
 	Assigned.sort();
 	Completed.sort();
 	
+<<<<<<< HEAD
 =======
 	getFile(FileName);
+>>>>>>> refs/remotes/origin/master
+=======
 >>>>>>> refs/remotes/origin/master
 	
 	bool menuBool = false; bool runAgain = true;
 	int menuInput = 0;
-		
+	
+	cout << "Welcome to the menu based assignment system!\n";
+	
 	while(runAgain){
 		menuBool = false;
 	
