@@ -33,7 +33,7 @@ public:
 
 	Date(int year, int month, int day, DateFormat format = DateFormat::US) : year(year), month(month), day(day), format(format){
 		if (!valid_date(year, month, day))
-			throw std::exception(" The date is not valid");
+			throw std::runtime_error(" The date is not valid");
 	}
 
 	void set_format(DateFormat format){
@@ -90,7 +90,7 @@ public:
 		}
 
 		if (!valid_date(year, month, day))
-			throw std::exception(" The date is not valid");
+			throw std::runtime_error(" The date is not valid");
 
 		return Date(year, month, day, format);
 
@@ -123,7 +123,7 @@ public:
 	//checks if this date is valid
 	void check_valid(){
 		if (!valid_date(year, month, day))
-			throw std::exception("The date is invalid");
+			throw std::runtime_error("The date is invalid");
 	}
 
 	//checks if a date is valid
