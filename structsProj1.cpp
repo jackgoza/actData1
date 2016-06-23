@@ -348,11 +348,47 @@ void displayLate(list<assignment> Comp)//diplay number of late status
 	cout << count << endl;
 }
 
+bool getFile(string FileName, list<assignment> Assignments, list<assignment> Assigned, list<assignment> Completed) {
+	bool checkFile = false;
+	while (checkFile == false) {
+		int choice;
+		ifstream fin(FileName);
+		cout << "Enter the name of the file you want to open. Please include file extension:\n ";
+		cin >> FileName;
+		if (!fin) {
+			cout << "Error opening file. Make sure the file is in the same folder as the program.\n";
+			cout << "Please choose from the following actions:\n"
+			<< "1. Re-enter the file name and extension.\n"
+			<< "2. Exit the program.\n";
+			cin >> choice;
+			switch (choice) {
+				case 1: checkFile = false; break;
+				case 2: return false; break;
+			}
+		}
+		else {
+			assignment temp;
+			checkFile = true;
+			while (fin.good()) {
+				fin >> temp;
+				Assignments.push_back(temp);
+				if (temp.getStatus() == assigned) {
+					Assigned.push_back(temp);
+				}
+				else {
+					Completed.push_back(temp);
+				}
+			}
+		}
+	}
+	return true;
+}
+
 int main(){
 
 	
 	list<assignment> Assignments; // all assignments
-	list<assignment> Assigned; 
+	list<assignment> Assigned;
 	list<assignment> Completed; // completed and late assignments
 
 	assignment temp;
@@ -363,32 +399,17 @@ int main(){
 	cout << "Enter the name of the file you want to open, please include file extension: " << endl;
 	cin >> FileName;
 	
-	/*TODO
-	 make function fetfile() to call for lines 350-360. put in a while loop until correct file
-	 has been found and loaded. give function a menu option for user to choose to try again or
-	 exit
-	 */
+	bool goodToGo;
+	goodToGo=getFile(FileName, Assignments, Assigned, Completed);
 	
 	// initiate input/output variables
-	ifstream fin(FileName);
-	if (!fin)//check that file exists
+	if (!goodToGo)//check that file exists
 	{
-		cout << "Error opening input file.\n " << "Program will now exit." << endl;
+		cout << "Program will now exit." << endl;
 		system("pause");
 		return -1;
 	}
 
-
-	while (fin.good()){ // initialize all lists with file input
-		fin >> temp;
-		Assignments.push_back(temp);
-		if (temp.getStatus() == assigned){
-			Assigned.push_back(Assignments.back());
-		}
-		else{
-			Completed.push_back(Assignments.back());
-		}
-	}
 
 	// initial sort of all lists
 	Assignments.sort();
