@@ -92,23 +92,35 @@ Date inputDate(){
 	}
 }
 
-assignment addAssignment(){ // use this to make a new assignment
-	assignment newAssn;
-	string temp;
+assignment addAssignment(list<assignment> AssignmentList){ // use this to make a new assignment
+	assignment newAssn;			//*********** Made a huge mistake thinking the due dates were unique
+	string temp;			// this function is fixed to check uniqueness of assigned dates
 	char tempC;
 
-	cout << "Due Date: (mm-dd-yyyy): ";
-	newAssn.setDueDate(inputDate());
+	cout << "Assigned Date: (mm-dd-yyyy): ";
+
+	newAssn.setAssignedDate(inputDate());
+	
+	list<assignment>::iterator it = AssignmentList.begin();
+
+	do{
+		if (it->getAssignedDate() == newAssn.getAssignedDate()){
+			cout << "Assignment already exists, enter another date: ";
+			newAssn.setAssignedDate(inputDate());
+			it = AssignmentList.begin();
+		}
+		it++;
+	} while (it != AssignmentList.end());
 
 	cout << endl << "Description: ";
 	getline(cin, temp);
 	newAssn.setDescription(temp);
 
 	do{
-		cout << endl << "Assigned Date: ";
-		newAssn.setAssignedDate(inputDate());
+		cout << endl << "Due Date: ";
+		newAssn.setDueDate(inputDate());
 		if (newAssn.getDueDate() <= newAssn.getAssignedDate())
-			cout << "Invalid Assigned Date";
+			cout << "Invalid Due Date";
 
 	} while (newAssn.getDueDate() <= newAssn.getAssignedDate());
 		
@@ -387,11 +399,10 @@ int main(){
 		cout << "\n"<< "What would you like to do?\n";
 		cout << "1. Display assignments\n"
 		<< "2. Add assignment to workload\n"
-		<< "3. Edit due date for assignment\n"
-		<< "4. Edit assignment description\n"
-		<< "5. Log assignment completion\n"
-		<< "6. Display number of late assignments\n"
-		<< "7. Save    8. Exit\n\n";
+		<< "3. Edit assignment\n"
+		<< "4. Log assignment completion\n"
+		<< "5. Display number of late assignments\n"
+		<< "6. Save    7. Exit\n\n";
 		
 		cin >> menuInput;
 		if (cin.good()){
@@ -409,7 +420,7 @@ int main(){
 			printAssignments(Assigned, Completed); break; // functional, TODO make it look pretty
 
 		case 2 : // works
-			temp = addAssignment();
+			temp = addAssignment(Assignments);
 			Assignments.push_back(temp);
 			Assignments.sort();
 			if (temp.getStatus() == assigned){
@@ -424,15 +435,15 @@ int main(){
 
 		case 3: 
 			editDue(Assigned); break; // TODO make all three edit cases one case 
-										//(edit assignment: find assignment by due date: which part of assignment would you like to edit?)
+										//(edit assignment: find assignment by **assigned** date: which part of assignment would you like to edit?)
 		case 4: 
-			editDescription(Assigned); break;
+			editStatus(Assigned, Completed); break;
 		
 		case 5: 
-			editStatus (Assigned, Completed); break; // doesn't work
+			displayLate(Completed); break; // works
 		
 		case 6 :
-			displayLate(Completed); break; // works
+			
 		
 		case 7 : 
 			printAssignments(Assigned, Completed);// needs to output to txt file to update
