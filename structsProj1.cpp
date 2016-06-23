@@ -332,6 +332,41 @@ void displayLate(list<assignment> Comp)//diplay number of late status
 	}
 }
 
+string getFile(string FileName) {
+	bool checkFile = false;
+	while (checkFile == false) {
+		int choice;
+		ifstream fin(FileName);
+		cout << "Enter the name of the file you want to open. Please include file extension:\n ";
+		cin >> FileName;
+		if (!fin) {
+			cout << "Error opening file. Make sure the file is in the same folder as the program.\n";
+			cout << "Please choose from the following actions:\n"
+				<< "1. Re-enter the file name and extension.\n"
+				<< "2. Exit the program.\n";
+			cin >> choice;
+			switch (choice) {
+			case 1: checkFile = false; break;
+			case 2: return -1; break;
+			}
+		}
+		else {
+			checkFile = true;
+			while (fin.good()) {
+				fin >> temp;
+				Assignments.push_back(temp);
+				if (temp.getStatus() == assigned) {
+					Assigned.push_back(temp);
+				}
+				else {
+					Completed.push_back(temp);
+				}
+			}
+		}
+	}
+return FileName
+}
+
 int main(){
 	SetConsoleTitle(TEXT("Assignment System, Proj1A, BY: J. Goza, J. Ford, S. Peery")); // set console title
 	
@@ -343,42 +378,16 @@ int main(){
 	
 	string FileName;//used incase of diffrent file extensions .txt and .csv
 	
+	cout << "Welcome to the menu based assignment system!\n";
+
 	// determine file extesnion type and name to open with fin variable
 	cout << "Enter the name of the file you want to open, please include file extension: " << endl;
 	cin >> FileName;
-	
-	/*TODO
-	 make function fetfile() to call for lines 350-360. put in a while loop until correct file
-	 has been found and loaded. give function a menu option for user to choose to try again or
-	 exit
-	 */
-	
-	// initiate input/output variables
-	ifstream fin(FileName);
-	if (!fin)//check that file exists
-	{
-		cout << "Error opening input file.\n " << "Program will now exit." << endl;
-		system("pause");
-		return -1;
-	}
-
-
-	while (fin.good()){
-		fin >> temp;
-		Assignments.push_back(temp);
-		if (temp.getStatus() == assigned){
-			Assigned.push_back(temp);
-		}
-		else{
-			Completed.push_back(temp);
-		}
-	}
+	getFile(FileName);
 	
 	bool menuBool = false; bool runAgain = true;
 	int menuInput = 0;
-	
-	cout << "Welcome to the menu based assignment system!\n";
-	
+		
 	while(runAgain){
 		menuBool = false;
 	
