@@ -87,7 +87,7 @@ Date inputDate(){
 			}
 		}
 		catch (exception){
-			cout << "Please enter a valid date(dd-mm-yyyy): ";
+			cout << "Please enter a valid date(mm-dd-yyyy): ";
 		}
 	}
 }
