@@ -76,9 +76,10 @@ Date inputDate(){
 	while (true){
 		
 		try {
+			cin.ignore();
 			getline(cin, temp);
-			Date date(temp);
-			if (date.valid_date(date.getDay(), date.getMonth(), date.getYear())){
+			Date date(temp, US);
+			if (date.valid_date(date.getYear(), date.getMonth(), date.getDay())){
 				return date;
 			}
 			else{
@@ -86,28 +87,40 @@ Date inputDate(){
 			}
 		}
 		catch (exception){
-			cout << "Please enter a valid date(dd-mm-yyyy): ";
+			cout << "Please enter a valid date(mm-dd-yyyy): ";
 		}
 	}
 }
 
-assignment getAssn(){
-	assignment newAssn;
-	string temp;
+assignment addAssignment(list<assignment> AssignmentList){ // use this to make a new assignment
+	assignment newAssn;			//*********** Made a huge mistake thinking the due dates were unique
+	string temp;			// this function is fixed to check uniqueness of assigned dates
 	char tempC;
 
-	cout << "Due Date: (dd-mm-yyyy); ";
-	newAssn.setDueDate(inputDate());
+	cout << "Assigned Date: (mm-dd-yyyy): ";
+
+	newAssn.setAssignedDate(inputDate());
+	
+	list<assignment>::iterator it = AssignmentList.begin();
+
+	do{
+		if (it->getAssignedDate() == newAssn.getAssignedDate()){
+			cout << "Assignment already exists, enter another date: ";
+			newAssn.setAssignedDate(inputDate());
+			it = AssignmentList.begin();
+		}
+		it++;
+	} while (it != AssignmentList.end());
 
 	cout << endl << "Description: ";
 	getline(cin, temp);
 	newAssn.setDescription(temp);
 
 	do{
-		cout << endl << "Assigned Date: ";
-		newAssn.setAssignedDate(inputDate());
+		cout << endl << "Due Date: ";
+		newAssn.setDueDate(inputDate());
 		if (newAssn.getDueDate() <= newAssn.getAssignedDate())
-			cout << "Invalid Assigned Date";
+			cout << "Invalid Due Date";
 
 	} while (newAssn.getDueDate() <= newAssn.getAssignedDate());
 		
@@ -154,12 +167,6 @@ void addAssn(list<assignment> List){
 	List.push_back(Assn);
 } // This is redundant
 
-void sort(list<assignment> L1, list<assignment> L2, list<assignment> L3){
-	L1.sort();
-	L2.sort();
-	L3.sort();
-}
-
 void markComplete(list<assignment> Assn, list<assignment> Comp, Date assnDate){
 	list <assignment>::iterator it;
 	for (it = Assn.begin(); it != Assn.end(); it++){
@@ -189,11 +196,15 @@ void printAssignments(list<assignment> Assn, list<assignment> Comp){
 	
 }
 
-void save(string File, list<assignment> List){
-	ofstream out(File);
+void save(string File, list<assignment> List){ // overwrite file with new list
+	ofstream out(File);                        // fixed so it doesn't add newline to end of file
 	list<assignment>::iterator it;
-	for (it = List.begin(); it != List.end(); it++)
-		out << *it << endl;
+	for (it = List.begin(); it != List.end(); it++){
+		out << *it;
+		if (*it != List.back()){
+			out << endl;
+		}
+	}
 	out.close();
 }
 
@@ -264,7 +275,7 @@ void editDue(list<assignment> Assn)//edit due date
 void editDescription(list<assignment> Assn)//edit description of assignment
 {// first find the assignment with the given due date.
 	//more than one assigment may share same due date
-	//Don’t edit the assignment in these cases :
+	//Don’t edit the assignment in these cases
 	//The assignment with the given assigned list doesn’t exists in the assigned list.
 	//The given assigned date is invalid.
 	assignment Temp;
@@ -317,6 +328,12 @@ void editStatus(list<assignment> Assn, list<assignment> Comp)//edit status: late
 	}
 }
 
+void editAssignment(){
+	cout << "Enter assigned date to edit assignment: ";
+	Date temp(inputDate());
+
+}
+
 void displayLate(list<assignment> Comp)//diplay number of late status
 {
 	// On demand, count the number of late assignments.
@@ -326,68 +343,64 @@ void displayLate(list<assignment> Comp)//diplay number of late status
 	for (it = Comp.begin(); it != Comp.end(); it++) {
 		if (it->getStatus() == late) {
 			count++;
-		}
-		cout << count << endl;
-		return;
+		}	
 	}
-}
-
-string getFile(string FileName) {
-	bool checkFile = false;
-	while (checkFile == false) {
-		int choice;
-		ifstream fin(FileName);
-		cout << "Enter the name of the file you want to open. Please include file extension:\n ";
-		cin >> FileName;
-		if (!fin) {
-			cout << "Error opening file. Make sure the file is in the same folder as the program.\n";
-			cout << "Please choose from the following actions:\n"
-				<< "1. Re-enter the file name and extension.\n"
-				<< "2. Exit the program.\n";
-			cin >> choice;
-			switch (choice) {
-			case 1: checkFile = false; break;
-			case 2: return -1; break;
-			}
-		}
-		else {
-			checkFile = true;
-			while (fin.good()) {
-				fin >> temp;
-				Assignments.push_back(temp);
-				if (temp.getStatus() == assigned) {
-					Assigned.push_back(temp);
-				}
-				else {
-					Completed.push_back(temp);
-				}
-			}
-		}
-	}
-return FileName
+	cout << count << endl;
 }
 
 int main(){
-	//SetConsoleTitle(TEXT("Assignment System, Proj1A, BY: J. Goza, J. Ford, S. Peery")); // set console title
+
 	
-	list<assignment> Assignments;
-	list<assignment> Assigned;
-	list<assignment> Completed;
+	list<assignment> Assignments; // all assignments
+	list<assignment> Assigned; 
+	list<assignment> Completed; // completed and late assignments
 
 	assignment temp;
 	
 	string FileName;//used incase of diffrent file extensions .txt and .csv
 	
-	cout << "Welcome to the menu based assignment system!\n";
-
 	// determine file extesnion type and name to open with fin variable
 	cout << "Enter the name of the file you want to open, please include file extension: " << endl;
 	cin >> FileName;
-	getFile(FileName);
+	
+	/*TODO
+	 make function fetfile() to call for lines 350-360. put in a while loop until correct file
+	 has been found and loaded. give function a menu option for user to choose to try again or
+	 exit
+	 */
+	
+	// initiate input/output variables
+	ifstream fin(FileName);
+	if (!fin)//check that file exists
+	{
+		cout << "Error opening input file.\n " << "Program will now exit." << endl;
+		system("pause");
+		return -1;
+	}
+
+
+	while (fin.good()){ // initialize all lists with file input
+		fin >> temp;
+		Assignments.push_back(temp);
+		if (temp.getStatus() == assigned){
+			Assigned.push_back(Assignments.back());
+		}
+		else{
+			Completed.push_back(Assignments.back());
+		}
+	}
+
+	// initial sort of all lists
+	Assignments.sort();
+	Assigned.sort();
+	Completed.sort();
+	
 	
 	bool menuBool = false; bool runAgain = true;
 	int menuInput = 0;
-		
+	
+	cout << "Welcome to the menu based assignment system!\n";
+	
 	while(runAgain){
 		menuBool = false;
 	
@@ -396,11 +409,10 @@ int main(){
 		cout << "\n"<< "What would you like to do?\n";
 		cout << "1. Display assignments\n"
 		<< "2. Add assignment to workload\n"
-		<< "3. Edit due date for assignment\n"
-		<< "4. Edit assignment description\n"
-		<< "5. Log assignment completion\n"
-		<< "6. Display number of late assignments\n"
-		<< "7. Save    8. Exit\n\n";
+		<< "3. Edit assignment\n"
+		<< "4. Log assignment completion\n"
+		<< "5. Display number of late assignments\n"
+		<< "6. Save    7. Exit\n\n";
 		
 		cin >> menuInput;
 		if (cin.good()){
@@ -413,18 +425,40 @@ int main(){
 		}
 	}
 	
-	switch(menuInput){
-		case 1 : printAssignments(Assigned, Completed); break;
-		case 2 : addAssn(Assigned); break;
-		case 3: editDue(Assigned); break;
-		case 4: editDescription(Assigned); break;
-		case 5: editStatus (Assigned, Completed); break;
-		case 6 : displayLate(Completed); break;
-		case 7 : printAssignments(Assigned, Completed);// needs to output to txt file to update
-		case 8 : cout << "Goodbye!\n"; runAgain = false; break;
+		switch(menuInput){
+			case 1 : 
+				printAssignments(Assigned, Completed); break; // functional, TODO make it look pretty
+
+			case 2 : // works
+				temp = addAssignment(Assignments);
+				Assignments.push_back(temp);
+				Assignments.sort();
+				if (temp.getStatus() == assigned){
+					Assigned.push_back(temp);
+					Assigned.sort();
+				}
+				else{
+					Completed.push_back(temp);
+					Completed.sort();
+				}
+				break;
+
+			case 3: 
+				editDue(Assigned); break; // TODO make all three edit cases one case 
+											//(edit assignment: find assignment by **assigned** date: which part of assignment would you like to edit?)
+			case 4: 
+				editStatus(Assigned, Completed); break; // complete assignment: needs to get completion date and change status accordingly
+		
+			case 5: 
+				displayLate(Completed); break; // works
+		
+			case 6: 
+				save(FileName, Assignments); break; //works
+			
+			case 7 : 
+				"Goodbye!\n"; runAgain = false; break;
+		}
 	}
-	}
-	
 	
 	system("pause");
 	return 0;
