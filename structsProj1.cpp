@@ -65,7 +65,11 @@ Must submit Individual Report
 #include <iterator>
 #include <limits>
 <<<<<<< HEAD
+<<<<<<< HEAD
 // #include <Windows.h>
+=======
+
+>>>>>>> refs/remotes/origin/master
 =======
 
 >>>>>>> refs/remotes/origin/master
@@ -390,6 +394,7 @@ return FileName
 
 int main(){
 <<<<<<< HEAD
+<<<<<<< HEAD
 	// SetConsoleTitle(TEXT("Assignment System, Proj1A, BY: J. Goza, J. Ford, S. Peery")); // set console title
 =======
 	//SetConsoleTitle(TEXT("Assignment System, Proj1A, BY: J. Goza, J. Ford, S. Peery")); // set console title
@@ -398,6 +403,9 @@ int main(){
 }
 
 int main(){
+
+>>>>>>> refs/remotes/origin/master
+=======
 
 >>>>>>> refs/remotes/origin/master
 	
