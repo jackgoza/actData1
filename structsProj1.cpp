@@ -197,10 +197,14 @@ void printAssignments(list<assignment> Assn, list<assignment> Comp){
 }
 
 void save(string File, list<assignment> List){ // overwrite file with new list
-	ofstream out(File);
+	ofstream out(File);                        // fixed so it doesn't add newline to end of file
 	list<assignment>::iterator it;
-	for (it = List.begin(); it != List.end(); it++)
-		out << *it << endl;
+	for (it = List.begin(); it != List.end(); it++){
+		out << *it;
+		if (*it != List.back()){
+			out << endl;
+		}
+	}
 	out.close();
 }
 
@@ -324,6 +328,12 @@ void editStatus(list<assignment> Assn, list<assignment> Comp)//edit status: late
 	}
 }
 
+void editAssignment(){
+	cout << "Enter assigned date to edit assignment: ";
+	Date temp(inputDate());
+
+}
+
 void displayLate(list<assignment> Comp)//diplay number of late status
 {
 	// On demand, count the number of late assignments.
@@ -373,10 +383,10 @@ int main(){
 		fin >> temp;
 		Assignments.push_back(temp);
 		if (temp.getStatus() == assigned){
-			Assigned.push_back(temp);
+			Assigned.push_back(Assignments.back());
 		}
 		else{
-			Completed.push_back(temp);
+			Completed.push_back(Assignments.back());
 		}
 	}
 
@@ -415,44 +425,40 @@ int main(){
 		}
 	}
 	
-	switch(menuInput){
-		case 1 : 
-			printAssignments(Assigned, Completed); break; // functional, TODO make it look pretty
+		switch(menuInput){
+			case 1 : 
+				printAssignments(Assigned, Completed); break; // functional, TODO make it look pretty
 
-		case 2 : // works
-			temp = addAssignment(Assignments);
-			Assignments.push_back(temp);
-			Assignments.sort();
-			if (temp.getStatus() == assigned){
-				Assigned.push_back(temp);
-				Assigned.sort();
-			}
-			else{
-				Completed.push_back(temp);
-				Completed.sort();
-			}
-			break;
+			case 2 : // works
+				temp = addAssignment(Assignments);
+				Assignments.push_back(temp);
+				Assignments.sort();
+				if (temp.getStatus() == assigned){
+					Assigned.push_back(temp);
+					Assigned.sort();
+				}
+				else{
+					Completed.push_back(temp);
+					Completed.sort();
+				}
+				break;
 
-		case 3: 
-			editDue(Assigned); break; // TODO make all three edit cases one case 
-										//(edit assignment: find assignment by **assigned** date: which part of assignment would you like to edit?)
-		case 4: 
-			editStatus(Assigned, Completed); break;
+			case 3: 
+				editDue(Assigned); break; // TODO make all three edit cases one case 
+											//(edit assignment: find assignment by **assigned** date: which part of assignment would you like to edit?)
+			case 4: 
+				editStatus(Assigned, Completed); break; // complete assignment: needs to get completion date and change status accordingly
 		
-		case 5: 
-			displayLate(Completed); break; // works
+			case 5: 
+				displayLate(Completed); break; // works
 		
-		case 6 :
+			case 6: 
+				save(FileName, Assignments); break; //works
 			
-		
-		case 7 : 
-			printAssignments(Assigned, Completed);// needs to output to txt file to update
-		
-		case 8 : 
-			cout << "Goodbye!\n"; runAgain = false; break;
+			case 7 : 
+				"Goodbye!\n"; runAgain = false; break;
+		}
 	}
-	}
-	
 	
 	system("pause");
 	return 0;

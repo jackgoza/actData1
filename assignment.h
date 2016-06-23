@@ -38,6 +38,7 @@ public:
 	bool operator <(const assignment& rhs) const;
 	bool operator >(const assignment& rhs) const;
 	bool operator ==(const assignment& rhs) const;
+	bool operator !=(const assignment& rhs) const;
 
 };
 
