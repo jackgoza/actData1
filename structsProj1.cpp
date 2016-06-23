@@ -64,7 +64,11 @@ Must submit Individual Report
 #include <list>
 #include <iterator>
 #include <limits>
+<<<<<<< HEAD
 // #include <Windows.h>
+=======
+
+>>>>>>> master
 #undef max
 
 using namespace std;
@@ -339,7 +343,11 @@ void displayLate(list<assignment> Comp)//diplay number of late status
 }
 
 int main(){
+<<<<<<< HEAD
 	// SetConsoleTitle(TEXT("Assignment System, Proj1A, BY: J. Goza, J. Ford, S. Peery")); // set console title
+=======
+	//SetConsoleTitle(TEXT("Assignment System, Proj1A, BY: J. Goza, J. Ford, S. Peery")); // set console title
+>>>>>>> master
 	
 	list<assignment> Assignments; // all assignments
 	list<assignment> Assigned; 
