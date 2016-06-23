@@ -9,6 +9,7 @@
 #include "StringTokenizer.h"
 #include <sstream>
 #include <iomanip>
+#include <string>
 using namespace std;
 /* class Date wirtten by Mohammad Kuhail
 e-mail: kuhailm@Umkc.edu
