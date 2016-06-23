@@ -64,7 +64,7 @@ Must submit Individual Report
 #include <list>
 #include <iterator>
 #include <limits>
-#include <Windows.h>
+
 #undef max
 
 using namespace std;
@@ -368,7 +368,7 @@ return FileName
 }
 
 int main(){
-	SetConsoleTitle(TEXT("Assignment System, Proj1A, BY: J. Goza, J. Ford, S. Peery")); // set console title
+	//SetConsoleTitle(TEXT("Assignment System, Proj1A, BY: J. Goza, J. Ford, S. Peery")); // set console title
 	
 	list<assignment> Assignments;
 	list<assignment> Assigned;
