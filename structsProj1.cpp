@@ -64,7 +64,7 @@ Must submit Individual Report
 #include <list>
 #include <iterator>
 #include <limits>
-#include <Windows.h>
+// #include <Windows.h>
 #undef max
 
 using namespace std;
@@ -271,7 +271,7 @@ void editDue(list<assignment> Assn)//edit due date
 void editDescription(list<assignment> Assn)//edit description of assignment
 {// first find the assignment with the given due date.
 	//more than one assigment may share same due date
-	//Don’t edit the assignment in these cases :
+	//Don’t edit the assignment in these cases
 	//The assignment with the given assigned list doesn’t exists in the assigned list.
 	//The given assigned date is invalid.
 	assignment Temp;
@@ -339,7 +339,7 @@ void displayLate(list<assignment> Comp)//diplay number of late status
 }
 
 int main(){
-	SetConsoleTitle(TEXT("Assignment System, Proj1A, BY: J. Goza, J. Ford, S. Peery")); // set console title
+	// SetConsoleTitle(TEXT("Assignment System, Proj1A, BY: J. Goza, J. Ford, S. Peery")); // set console title
 	
 	list<assignment> Assignments; // all assignments
 	list<assignment> Assigned; 
