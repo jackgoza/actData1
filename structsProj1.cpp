@@ -64,15 +64,7 @@ Must submit Individual Report
 #include <list>
 #include <iterator>
 #include <limits>
-<<<<<<< HEAD
-<<<<<<< HEAD
-// #include <Windows.h>
-=======
 
->>>>>>> refs/remotes/origin/master
-=======
-
->>>>>>> refs/remotes/origin/master
 #undef max
 
 using namespace std;
@@ -336,10 +328,60 @@ void editStatus(list<assignment> Assn, list<assignment> Comp)//edit status: late
 	}
 }
 
-void editAssignment(){
+assignment editAssignment(list<assignment> List){
+	
+	Date date(inputDate());
+	assignment temp;
+	string tempString;
+	char tempChar;
 	cout << "Enter assigned date to edit assignment: ";
-	Date temp(inputDate());
 
+	list<assignment>::iterator it = List.begin();
+
+	do{
+
+		if (it == List.end()){
+			cout << "Assignment not found, enter another assignment: ";
+			date = inputDate();
+			it = List.begin();
+		}
+		it++;
+	} while (it->getAssignedDate() != date);
+
+	temp = *it;
+	List.erase(it);
+
+	do{
+		cout << "Choose what to edit:\n1. Due Date\n2. Description\n3. Status\n";
+		cin >> tempChar;
+		getline(cin, tempString);
+	} while (tempString != "" || (int)tempChar < 49 || int(tempChar > 51));
+
+	switch (tempChar){
+	case 1:
+		cout << "Enter new due date: ";
+		date = inputDate();
+		while (date <= temp.getAssignedDate()){
+			cout << "Due date must be after assigned date: ";
+			date = inputDate();
+		}
+		temp.setDueDate(date);
+		break;
+	case 2:
+		"Enter new description: ";
+		getline(cin, tempString);
+		temp.setDescription(tempString);
+		break;
+	case 3:
+		do{
+			cout << endl << "Select new status: " << endl << "1. assigned\n2, completed\n3. late\n";
+			cin >> tempChar;
+			getline(cin, tempString);
+		} while (tempString != "" || (int)tempChar < 49 || int(tempChar > 51));
+		temp.setStatus((int)tempChar - 48);
+		break;
+	}
+	return temp;
 }
 
 void displayLate(list<assignment> Comp)//diplay number of late status
@@ -354,28 +396,28 @@ void displayLate(list<assignment> Comp)//diplay number of late status
 		}	
 	}
 	cout << count << endl;
-<<<<<<< HEAD
 }
 
-string getFile(string FileName) {
+bool getFile(string FileName, list<assignment>& Assignments, list<assignment>& Assigned, list<assignment>& Completed) {
 	bool checkFile = false;
 	while (checkFile == false) {
 		int choice;
 		ifstream fin(FileName);
-		cout << "Enter the name of the file you want to open. Please include file extension:\n ";
-		cin >> FileName;
+		//cout << "Enter the name of the file you want to open. Please include file extension:\n ";
+		//cin >> FileName;
 		if (!fin) {
 			cout << "Error opening file. Make sure the file is in the same folder as the program.\n";
 			cout << "Please choose from the following actions:\n"
-				<< "1. Re-enter the file name and extension.\n"
-				<< "2. Exit the program.\n";
+			<< "1. Re-enter the file name and extension.\n"
+			<< "2. Exit the program.\n";
 			cin >> choice;
 			switch (choice) {
-			case 1: checkFile = false; break;
-			case 2: return -1; break;
+				case 1: checkFile = false; break;
+				case 2: return false; break;
 			}
 		}
 		else {
+			assignment temp;
 			checkFile = true;
 			while (fin.good()) {
 				fin >> temp;
@@ -389,28 +431,14 @@ string getFile(string FileName) {
 			}
 		}
 	}
-return FileName
-}
-
-int main(){
-<<<<<<< HEAD
-<<<<<<< HEAD
-	// SetConsoleTitle(TEXT("Assignment System, Proj1A, BY: J. Goza, J. Ford, S. Peery")); // set console title
-=======
-	//SetConsoleTitle(TEXT("Assignment System, Proj1A, BY: J. Goza, J. Ford, S. Peery")); // set console title
->>>>>>> refs/remotes/origin/master
-=======
+	return true;
 }
 
 int main(){
 
->>>>>>> refs/remotes/origin/master
-=======
-
->>>>>>> refs/remotes/origin/master
 	
 	list<assignment> Assignments; // all assignments
-	list<assignment> Assigned; 
+	list<assignment> Assigned;
 	list<assignment> Completed; // completed and late assignments
 
 	assignment temp;
@@ -420,49 +448,24 @@ int main(){
 	// determine file extesnion type and name to open with fin variable
 	cout << "Enter the name of the file you want to open, please include file extension: " << endl;
 	cin >> FileName;
-<<<<<<< HEAD
-<<<<<<< HEAD
-=======
->>>>>>> refs/remotes/origin/master
 	
-	/*TODO
-	 make function fetfile() to call for lines 350-360. put in a while loop until correct file
-	 has been found and loaded. give function a menu option for user to choose to try again or
-	 exit
-	 */
+	bool goodToGo;
+	goodToGo=getFile(FileName, Assignments, Assigned, Completed);
 	
 	// initiate input/output variables
-	ifstream fin(FileName);
-	if (!fin)//check that file exists
+	if (!goodToGo)//check that file exists
 	{
-		cout << "Error opening input file.\n " << "Program will now exit." << endl;
+		cout << "Program will now exit." << endl;
 		system("pause");
 		return -1;
 	}
 
-
-	while (fin.good()){ // initialize all lists with file input
-		fin >> temp;
-		Assignments.push_back(temp);
-		if (temp.getStatus() == assigned){
-			Assigned.push_back(Assignments.back());
-		}
-		else{
-			Completed.push_back(Assignments.back());
-		}
-	}
 
 	// initial sort of all lists
 	Assignments.sort();
 	Assigned.sort();
 	Completed.sort();
 	
-<<<<<<< HEAD
-=======
-	getFile(FileName);
->>>>>>> refs/remotes/origin/master
-=======
->>>>>>> refs/remotes/origin/master
 	
 	bool menuBool = false; bool runAgain = true;
 	int menuInput = 0;
@@ -512,8 +515,19 @@ int main(){
 				break;
 
 			case 3: 
-				editDue(Assigned); break; // TODO make all three edit cases one case 
-											//(edit assignment: find assignment by **assigned** date: which part of assignment would you like to edit?)
+				temp = editAssignment(Assigned);
+				Assignments.push_back(temp);
+				Assignments.sort();
+				if (temp.getStatus() == assigned){
+					Assigned.push_back(temp);
+					Assigned.sort();
+				}
+				else{
+					Completed.push_back(temp);
+					Completed.sort();
+				}
+				break;
+
 			case 4: 
 				editStatus(Assigned, Completed); break; // complete assignment: needs to get completion date and change status accordingly
 		
