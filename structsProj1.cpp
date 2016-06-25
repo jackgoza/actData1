@@ -73,11 +73,12 @@ Date inputDate(){
 	Date date;
 
 	string temp;
+	string buffer;
 	while (true){
 		
 		try {
-			cin.ignore();
-			getline(cin, temp);
+			cin >> temp;
+			getline(cin, buffer);
 			Date date(temp, US);
 			if (date.valid_date(date.getYear(), date.getMonth(), date.getDay())){
 				return date;
@@ -93,12 +94,11 @@ Date inputDate(){
 }
 
 assignment addAssignment(list<assignment> AssignmentList){ // use this to make a new assignment
-	assignment newAssn;			//*********** Made a huge mistake thinking the due dates were unique
-	string temp;			// this function is fixed to check uniqueness of assigned dates
+	assignment newAssn;
+	string temp;
 	char tempC;
 
 	cout << "Assigned Date: (mm-dd-yyyy): ";
-
 	newAssn.setAssignedDate(inputDate());
 	
 	list<assignment>::iterator it = AssignmentList.begin();
@@ -111,10 +111,12 @@ assignment addAssignment(list<assignment> AssignmentList){ // use this to make a
 		}
 		it++;
 	} while (it != AssignmentList.end());
-
-	cout << endl << "Description: ";
-	getline(cin, temp);
-	newAssn.setDescription(temp);
+	do{
+		cout << endl << "Description: ";
+		cin.ignore(numeric_limits<streamsize>::max(), '\n');
+		getline(cin, temp);
+		newAssn.setDescription(temp);
+	} while (temp == "");
 
 	do{
 		cout << endl << "Due Date: ";
@@ -329,27 +331,28 @@ void editStatus(list<assignment> Assn, list<assignment> Comp)//edit status: late
 }
 
 assignment editAssignment(list<assignment> List){
-	
+	cout << "Enter assigned date to edit assignment: ";
 	Date date(inputDate());
 	assignment temp;
 	string tempString;
 	char tempChar;
-	cout << "Enter assigned date to edit assignment: ";
+	
 
 	list<assignment>::iterator it = List.begin();
 
-	do{
-
+	while (it == List.end() || it->getAssignedDate() != date){
 		if (it == List.end()){
 			cout << "Assignment not found, enter another assignment: ";
 			date = inputDate();
 			it = List.begin();
 		}
 		it++;
-	} while (it->getAssignedDate() != date);
+	} 
 
 	temp = *it;
 	List.erase(it);
+
+	cout << temp << endl;
 
 	do{
 		cout << "Choose what to edit:\n1. Due Date\n2. Description\n3. Status\n";
@@ -398,28 +401,29 @@ void displayLate(list<assignment> Comp)//diplay number of late status
 	cout << count << endl;
 }
 
-bool getFile(string FileName, list<assignment>& Assignments, list<assignment>& Assigned, list<assignment>& Completed) {
+string getFile(string FileName, list<assignment>& Assignments, list<assignment>& Assigned, list<assignment>& Completed) {
 	bool checkFile = false;
 	while (checkFile == false) {
 		int choice;
 		ifstream fin(FileName);
-		//cout << "Enter the name of the file you want to open. Please include file extension:\n ";
-		//cin >> FileName;
 		if (!fin) {
 			cout << "Error opening file. Make sure the file is in the same folder as the program.\n";
 			cout << "Please choose from the following actions:\n"
-			<< "1. Re-enter the file name and extension.\n"
-			<< "2. Exit the program.\n";
+				<< "1. Re-enter the file name and extension.\n"
+				<< "2. Exit the program.\n";
 			cin >> choice;
 			switch (choice) {
-				case 1: checkFile = false; break;
-				case 2: return false; break;
+			case 1: checkFile = false;
+				cout << "Enter the name of the file you want to open. Please include file extension:\n ";
+				cin >> FileName;
+				break;
+			case 2: return "Exiting"; break;
 			}
 		}
 		else {
 			assignment temp;
 			checkFile = true;
-			while (fin.good()) {
+			while (!fin.eof()) {
 				fin >> temp;
 				Assignments.push_back(temp);
 				if (temp.getStatus() == assigned) {
@@ -431,34 +435,32 @@ bool getFile(string FileName, list<assignment>& Assignments, list<assignment>& A
 			}
 		}
 	}
-	return true;
+	return FileName;
 }
 
 int main(){
-
-	
 	list<assignment> Assignments; // all assignments
 	list<assignment> Assigned;
 	list<assignment> Completed; // completed and late assignments
 
 	assignment temp;
-	
+
 	string FileName;//used incase of diffrent file extensions .txt and .csv
-	
+
 	// determine file extesnion type and name to open with fin variable
 	cout << "Enter the name of the file you want to open, please include file extension: " << endl;
 	cin >> FileName;
-	
-	bool goodToGo;
-	goodToGo=getFile(FileName, Assignments, Assigned, Completed);
-	
+
+	//bool goodToGo;
+	string CorrectFileName = getFile(FileName, Assignments, Assigned, Completed);
+
 	// initiate input/output variables
-	if (!goodToGo)//check that file exists
-	{
-		cout << "Program will now exit." << endl;
-		system("pause");
-		return -1;
-	}
+	//if (!goodToGo)//check that file exists
+	//{
+	//	cout << "Program will now exit." << endl;
+	//	system("pause");
+	//	return -1;
+	//}
 
 
 	// initial sort of all lists
@@ -497,6 +499,7 @@ int main(){
 	}
 	
 		switch(menuInput){
+			cin.clear();
 			case 1 : 
 				printAssignments(Assigned, Completed); break; // functional, TODO make it look pretty
 
@@ -514,7 +517,7 @@ int main(){
 				}
 				break;
 
-			case 3: 
+			case 3:
 				temp = editAssignment(Assigned);
 				Assignments.push_back(temp);
 				Assignments.sort();
