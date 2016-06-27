@@ -146,7 +146,7 @@ bool addAssignment(list<assignment> AssignmentList, assignment& newAssn){ // use
 	newAssn.setDueDate(date);
 		
 	do{
-		cout << endl << "Status: " << endl << "1. assigned\n2, completed\n3. late\n";
+		cout << endl << "Status: " << endl << "1. assigned\n2. completed\n3. late\n";
 		cin >> tempC;
 		getline(cin, temp);
 	}while (temp != "" || (int)tempC < 49 || int(tempC > 51));
@@ -313,7 +313,7 @@ void displayLate(list<assignment> Comp)
 			count++;
 		}	
 	}
-	cout << count << endl;
+	cout <<"\nLate assignments: " << count << endl;
 }
 
 //takes in string for filename, checks it is a valid file and opens it. while reading in file it puts the info
@@ -325,8 +325,9 @@ void displayLate(list<assignment> Comp)
 //the function returns it to the main file so that the save function has the correct file to udate
 string getFile(string FileName, list<assignment>& Assignments, list<assignment>& Assigned, list<assignment>& Completed) {
 	bool checkFile = false;
+	string buffer;
 	while (checkFile == false) {
-		int choice;
+		char choice;
 		ifstream fin(FileName);
 		if (!fin) {
 			cout << "Error opening file. Make sure the file is in the same folder as the program.\n";
@@ -334,12 +335,13 @@ string getFile(string FileName, list<assignment>& Assignments, list<assignment>&
 				<< "1. Re-enter the file name and extension.\n"
 				<< "2. Exit the program.\n";
 			cin >> choice;
+			getline(cin, buffer);
 			switch (choice) {
-			case 1: checkFile = false;
+			case '1': checkFile = false;
 				cout << "Enter the name of the file you want to open. Please include file extension:\n ";
 				cin >> FileName;
 				break;
-			case 2: return "Exiting"; break;
+			case '2': return "Exiting"; break;
 			}
 		}
 		else {
