@@ -65,10 +65,16 @@ Must submit Individual Report
 #include <iterator>
 #include <limits>
 
-#undef max
+#undef max // this is used to a compile problem in VS2015
 
 using namespace std;
 
+// decleration and defined functions for main
+
+// input date funciton will take user input and use date.h
+// to validate input for an actual date. this is a bool function
+// that will return true of false (true for good input, false for
+// incorrect input. it makes no changes to lists or file
 bool inputDate(Date& date){
 	string temp;
 	string buffer;
@@ -93,6 +99,11 @@ bool inputDate(Date& date){
 	}
 }
 
+//boolean function that checks for valid info before adding an assignment to a list
+//since the assigned date is unique, it validates that the date doesnt exist prior
+//to adding it to a list. it will check and validate all info and then based on the 
+//status that will be assigned, this is done by menu option. this function does make
+//changes to the list however it does not update the input/ouput file
 bool addAssignment(list<assignment> AssignmentList, assignment& newAssn){ // use this to make a new assignment
 	string temp;
 	char tempC;
@@ -108,7 +119,7 @@ bool addAssignment(list<assignment> AssignmentList, assignment& newAssn){ // use
 	
 	list<assignment>::iterator it = AssignmentList.begin();
 
-	do{
+	do{// check to see if date is duplicate
 		if (it->getAssignedDate() == newAssn.getAssignedDate()){
 			cout << "Assignment already exists, no assignment added";
 			return false;
@@ -116,7 +127,7 @@ bool addAssignment(list<assignment> AssignmentList, assignment& newAssn){ // use
 		it++;
 	} while (it != AssignmentList.end());
 
-	do{
+	do{// if here, date not duplicate and its ok to add with all info
 		cout << endl << "Description: ";
 		getline(cin, temp);
 		newAssn.setDescription(temp);
@@ -144,6 +155,10 @@ bool addAssignment(list<assignment> AssignmentList, assignment& newAssn){ // use
 	return true;
 }
 
+//this function prints out both the assigned and completed lists
+//it prints out to the user, broken up into two parts: assigned and
+//completed. both lists are printed in descending order and will reflect
+//any changes made that the user has done to the point of printing
 void printAssignments(list<assignment> Assn, list<assignment> Comp){
 	
 	cout << "Assignments still due: \n";
@@ -159,6 +174,13 @@ void printAssignments(list<assignment> Assn, list<assignment> Comp){
 	
 }
 
+//this function is a boolean that validates the information provided by the user
+//it checks the date is valid and then checks to see if the date exists in the list.
+//if it exists, it then looks at the status to see if it is already completed,
+//if it isnt, then it allows for a change to be made. if it passes all validation
+//it calls the setstatus function to make chages. this function does not itself
+//chage anyinformation of the file or lists, it only validates true or false if 
+//the change is allowed
 bool completeAssignment(list<assignment>& List, list<assignment>::iterator& it){
 	assignment temp;
 	Date date;
@@ -200,8 +222,10 @@ bool completeAssignment(list<assignment>& List, list<assignment>::iterator& it){
 	return false;
 }
 
-void save(string File, list<assignment> List){ // overwrite file with new list
-	ofstream out(File);                        // fixed so it doesn't add newline to end of file
+//this function opens the input file and updates it with the 
+//assignments list. once copleted it closes the file
+void save(string File, list<assignment> List){ 
+	ofstream out(File);                        
 	list<assignment>::iterator it;
 	for (it = List.begin(); it != List.end(); it++){
 		out << *it;
@@ -212,6 +236,12 @@ void save(string File, list<assignment> List){ // overwrite file with new list
 	out.close();
 }
 
+//this is a bool funciton that allows the user to duedate, description and status
+//it calls the input date function to check the validity of the date being searched,
+//which must be search for by assigned date(its the only unique date). once the assigned date is
+//found, the user gets a menu to choose what to edit. the function checks any new date entered
+//for validity as well as checking to ensure duedate is not before an assigned date
+//this function does not change the input/output file, it only makes changes to the list
 bool editAssignment(list<assignment>& List,list<assignment>::iterator& it){
 	Date date;
 	cout << "Enter assigned date to edit assignment: ";
@@ -246,6 +276,7 @@ bool editAssignment(list<assignment>& List,list<assignment>::iterator& it){
 					return false;
 				}
 				it->setDueDate(date);
+				
 				return true;
 			case '2':
 				cout << "Enter new description: ";
@@ -268,10 +299,13 @@ bool editAssignment(list<assignment>& List,list<assignment>::iterator& it){
 	return false;
 }
 
-void displayLate(list<assignment> Comp)//diplay number of late status
+// On demand, count the number of late assignments.
+// late status should only be in the list of assigned
+// this function will iterate throught the completed list and search for the status of late
+//it then keeps count of the number found and outputs the info to the screen for the user
+//this function does not save the info nor make changes to the input/output file
+void displayLate(list<assignment> Comp)
 {
-	// On demand, count the number of late assignments.
-	// late status should only be in the list of assigned
 	int count = 0;
 	list <assignment>::iterator it;
 	for (it = Comp.begin(); it != Comp.end(); it++) {
@@ -282,6 +316,13 @@ void displayLate(list<assignment> Comp)//diplay number of late status
 	cout << count << endl;
 }
 
+//takes in string for filename, checks it is a valid file and opens it. while reading in file it puts the info
+//into three lists, the main list assignnments which is used to save all changes to be writen back to the 
+//valid file, the assinged list and completed list. as the data is added into the assignments list, they are checked
+//for status and also added to the appropriate list. while doing all this, each list is put into descending order
+//to make adding and edditing the list more efficent. it has a menu option so the user can try again if they miss
+//type the filename or to just plain quit the program. after the correct filename has been typed and checked
+//the function returns it to the main file so that the save function has the correct file to udate
 string getFile(string FileName, list<assignment>& Assignments, list<assignment>& Assigned, list<assignment>& Completed) {
 	bool checkFile = false;
 	while (checkFile == false) {
@@ -319,6 +360,7 @@ string getFile(string FileName, list<assignment>& Assignments, list<assignment>&
 	return FileName;
 }
 
+// main program
 int main(){
 	list<assignment> Assignments; // all assignments
 	list<assignment> Assigned;
@@ -328,20 +370,14 @@ int main(){
 
 	string FileName;//used incase of diffrent file extensions .txt and .csv
 
+	cout << "Welcome to the menu based assignment system!\n";
+  
 	// determine file extesnion type and name to open with fin variable
 	cout << "Enter the name of the file you want to open, please include file extension: " << endl;
 	cin >> FileName;
 
-	//bool goodToGo;
+	//call getfile function with return of correct filename string
 	string CorrectFileName = getFile(FileName, Assignments, Assigned, Completed);
-
-	// initiate input/output variables
-	//if (!goodToGo)//check that file exists
-	//{
-	//	cout << "Program will now exit." << endl;
-	//	system("pause");
-	//	return -1;
-	//}
 
 
 	// initial sort of all lists
@@ -349,17 +385,19 @@ int main(){
 	Assigned.sort();
 	Completed.sort();
 	
-	
+	// set bool for main program loop
 	bool menuBool = false; bool runAgain = true;
+
+	// set up main variables and itterator
 	int menuInput = 0;
 	Date date;
 	list<assignment>::iterator it;
 	
-	cout << "Welcome to the menu based assignment system!\n";
-	
+	//main loop
 	while(runAgain){
 		menuBool = false;
 	
+		//menu loop for selection 
 		while (!menuBool){
 	
 		cout << "\n"<< "What would you like to do?\n";
@@ -371,22 +409,25 @@ int main(){
 		<< "6. Save    7. Exit\n\n";
 		
 		cin >> menuInput;
+
+		//check for valid input and break out of loop
 		if (cin.good()){
 			menuBool=true;
 			break;
 		}
+		//non-valid input will restart menu selection loop
 		else{
 			cout << "Please limit input to integer coressponding to your choice\n\n";
-			cin.clear(); cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+			cin.clear(); cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');//clear anything remaining before starting loop over
 		}
 	}
-	
+		// switch case for menu selection
 		switch(menuInput){
 			cin.clear();
 			case 1 : 
-				printAssignments(Assigned, Completed); break; // functional, TODO make it look pretty
+				printAssignments(Assigned, Completed); break; //prints both assigned and completed list
 
-			case 2 : // works
+			case 2 : // allows addition of assignments(assigned || completed)
 				if (addAssignment(Assignments, temp)){
 					Assignments.push_back(temp);
 					Assignments.sort();
@@ -399,9 +440,10 @@ int main(){
 						Completed.sort();
 					}
 				}
+				save(FileName, Assignments);//update file with changes
 				break;
 
-			case 3: // TODO reorganize lists, erase edited assignment from all lists
+			case 3:
 				if (editAssignment(Assignments, it)){
 
 					list<assignment>::iterator it2;
@@ -428,9 +470,10 @@ int main(){
 						Completed.sort();
 					}
 				}
+				save(FileName, Assignments);//update file with changes
 				break;
 
-			case 4: 
+			case 4: // edit assigned to show completion
 				if (completeAssignment(Assignments, it)){
 					list<assignment>::iterator it2;
 					for (it2 = Assigned.begin(); it2 != Assigned.end(); it2++){
@@ -442,19 +485,19 @@ int main(){
 					Completed.push_back(*it);
 					Completed.sort();
 				}
+				save(FileName, Assignments);//update file with changes
 				break;
 		
-			case 5: 
-				displayLate(Completed); break; // works
+			case 5: // displays count to user of number of completed late assignments
+				displayLate(Completed); break; 
 		
-			case 6: 
-				save(FileName, Assignments); break; //works
+			case 6: // opens input file to edit changes and additions in desecding order
+				save(FileName, Assignments); break; 
 			
-			case 7 : 
+			case 7 : //exits the program
 				"Goodbye!\n"; runAgain = false; break;
 		}
 	}
-	
-	system("pause");
+	//system("pause");//used during testing
 	return 0;
 }
