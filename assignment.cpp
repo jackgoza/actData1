@@ -64,12 +64,12 @@ void assignment::setStatus(int stat){
 istream &operator>>(istream& in, assignment& current){
 	char temp;
 	
-
 	in >> current.dueDate;
 
-	getline(in, current.description, ',');
+	getline(in, current.description, ','); // descriptions may have spaces, this pulls everything until next comma
 
 	in >> current.assignedDate >> temp;
+	// get first letter of status
 
 	switch (temp){
 	case 'A':
@@ -80,18 +80,23 @@ istream &operator>>(istream& in, assignment& current){
 	case'l': current.status = late; break;
 	}
 
-	in.ignore(20, '\n');
+	in.ignore(20, '\n'); // ignore rest of line
 	return in;
 }
 
 ostream& operator<<(ostream& out, assignment& current){
-	out << current.dueDate << ", " << current.description << ", " << current.assignedDate << ", ";
-	switch (current.status){
+	out << setw(1) << right << current.dueDate;
+	out << "	";
+	out << setw(20) << left << current.description;
+	out << "	";
+	out << setw(1) << left <<  current.assignedDate ;
+	out << "	";
+	out << setw(20) << left; 
+	switch (current.status) {
 	case 1: out << "assigned"; break;
 	case 2: out << "completed"; break;
 	case 3: out << "late"; break;
 	}
-
 	return out;
 }
 

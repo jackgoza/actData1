@@ -95,6 +95,5 @@ public:
 	//Pre: assignment rhs exists
 	//Post: none
 	//Returns: bool
-
 };
 #endif
